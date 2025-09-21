@@ -1,7 +1,7 @@
 import React from 'react'
 import { getCurrentUser } from '@/actions/getCurrentUser';
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers'; // Import pour récupérer les en-têtes
+import { cookies, headers } from 'next/headers'; // Import pour récupérer les en-têtes
 import { MembersClientPage } from './MembersClientPage'; // Nouveau composant client
 
 interface Member {
