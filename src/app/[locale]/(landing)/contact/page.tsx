@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from '@heroicons/react/16/solid'
+import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import Image from 'next/image'
 
 export default function ContactPage() {

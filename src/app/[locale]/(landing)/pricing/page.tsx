@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import ModalOnboardingCheckout from "@/components/checkout/ModalCheckout";
 import FAQSection from "@/components/layout/FAQSection";
 import { notFound, useRouter } from "next/navigation";
-import { CheckIcon } from '@heroicons/react/20/solid'
+import { CheckIcon } from '@heroicons/react/24/solid'
 import { Loader2 } from "lucide-react";
 import ChatbotMessege from "../ChatbotMessege";
 
