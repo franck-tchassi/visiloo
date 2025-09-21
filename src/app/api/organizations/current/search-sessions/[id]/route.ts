@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prismadb';
 import { getCurrentUser } from "@/actions/getCurrentUser";
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
     try {
+        const { id: searchSessionId } = await context.params;
         const currentUser = await getCurrentUser();
 
         if (!currentUser || !currentUser.id) {
@@ -20,7 +21,6 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
             );
         }
 
-        const searchSessionId = params.id;
         const { organizationId } = await request.json();
 
         if (!searchSessionId || !organizationId) {
