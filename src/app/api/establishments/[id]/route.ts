@@ -1,14 +1,11 @@
 //api/establishments/[id]/route.ts
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prismadb";
 import { getCurrentUser } from "@/actions/getCurrentUser";
 
-interface Params {
-  params: { id: string };
-}
-
-export async function GET(_req: Request, { params }: Params) {
+// GET
+export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -37,7 +34,8 @@ export async function GET(_req: Request, { params }: Params) {
   }
 }
 
-export async function PUT(req: Request, { params }: Params) {
+// PUT
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -51,7 +49,6 @@ export async function PUT(req: Request, { params }: Params) {
   const body = await req.json();
 
   try {
-    // Vérifie que l'établissement existe bien et appartient à l'organisation
     const existing = await prisma.establishment.findFirst({
       where: {
         id: params.id,
@@ -90,7 +87,8 @@ export async function PUT(req: Request, { params }: Params) {
   }
 }
 
-export async function DELETE(_req: Request, { params }: Params) {
+// DELETE
+export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
   const user = await getCurrentUser();
 
   if (!user) {
