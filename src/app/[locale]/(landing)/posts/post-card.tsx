@@ -13,7 +13,7 @@ import Link from "next/link";
 import { Heart, MessageCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import MarkdownRenderer from "@/components/markdown-renderer";
+
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -114,7 +114,7 @@ export default function PostCard({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <MarkdownRenderer content={content} />
+        
       </CardContent>
       <CardFooter className="flex items-center space-x-4">
         <Button

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../../../../components/ui/avatar";
 import Link from "next/link";
-import MarkdownRenderer from "../../../../components/markdown-renderer";
+
 
 interface Post {
   id: string;
@@ -63,7 +63,7 @@ export default function PostCard({ post, showFullContent = false }: { post: Post
       )}
 
       <CardContent>
-        <MarkdownRenderer content={content} />
+        
       </CardContent>
     </Card>
   );

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
-import MarkdownRenderer from "@/components/markdown-renderer";
+
 
 export default function CreatePostPage() {
   const router = useRouter();
@@ -123,9 +123,7 @@ export default function CreatePostPage() {
                     <h2 className="text-2xl font-bold">
                       {title || "Post Title"}
                     </h2>
-                    <MarkdownRenderer
-                      content={content || "Your content will appear here..."}
-                    />
+                    
                   </div>
                 </CardContent>
               </Card>
