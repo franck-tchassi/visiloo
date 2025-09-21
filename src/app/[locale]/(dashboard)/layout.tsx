@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar"
 import React from "react"
 import { DashboardClientWrapper } from "./DashboardClientWrapper";
+import { redirect } from "next/navigation"
 
 
 export default async function DashboardLayout({
@@ -24,12 +25,11 @@ export default async function DashboardLayout({
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }>) {
-  const locale = params.locale;
+  const { locale } = await params;
 
   const currentUser = await getCurrentUser();
-  // Supprimé: console.log('DashboardLayout - currentUser:', currentUser); // DEBUG
 
   if (!currentUser || !currentUser.id) {
     redirect('/login');
@@ -37,7 +37,6 @@ export default async function DashboardLayout({
   }
 
   if (!currentUser.currentOrganizationId) {
-    // Supprimé: console.log('DashboardLayout - No currentOrganizationId for user:', currentUser.id); // DEBUG
     return (
       <div className="p-6 text-center text-gray-500">
         Veuillez sélectionner une organisation active pour gérer les membres.
@@ -61,9 +60,6 @@ export default async function DashboardLayout({
       createdAt: "asc"
     }
   });
-  // Supprimé: console.log('DashboardLayout - Organizations:', organizations); // DEBUG
-  // Supprimé: console.log('DashboardLayout - Current Organization ID from User:', currentUser.currentOrganizationId); // DEBUG
-  // Supprimé: console.log('DashboardLayout - Current Organization ID for Wrapper:', currentUser?.currentOrganizationId); // Debugging
 
   return (
     <SidebarProvider
