@@ -5,7 +5,8 @@ import { prisma } from "@/lib/prismadb";
 import { getCurrentUser } from "@/actions/getCurrentUser";
 
 // GET
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const user = await getCurrentUser();
 
   if (!user) {
@@ -19,7 +20,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   try {
     const establishment = await prisma.establishment.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: user.currentOrganizationId,
       }
     });
@@ -35,7 +36,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 }
 
 // PUT
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const user = await getCurrentUser();
 
   if (!user) {
@@ -51,7 +53,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   try {
     const existing = await prisma.establishment.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: user.currentOrganizationId
       }
     });
@@ -61,7 +63,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const updated = await prisma.establishment.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: body.name,
         address: body.address,
@@ -88,7 +90,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // DELETE
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const user = await getCurrentUser();
 
   if (!user) {
@@ -102,7 +105,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
   try {
     const existing = await prisma.establishment.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: user.currentOrganizationId
       }
     });
@@ -112,7 +115,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
     }
 
     await prisma.establishment.delete({
-      where: { id: params.id }
+      where: { id }
     });
 
     return NextResponse.json({ message: "Deleted successfully" });
