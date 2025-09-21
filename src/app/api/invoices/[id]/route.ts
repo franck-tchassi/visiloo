@@ -25,14 +25,15 @@ async function requireAuth() {
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   const user = await requireAuth();
   if (user instanceof NextResponse) return user;
 
   try {
     const invoice = await prisma.invoice.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { lines: true },
     });
 
@@ -52,27 +53,25 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   const user = await requireAuth();
   if (user instanceof NextResponse) return user;
 
   try {
     const body = await request.json();
-    
-    // Vérifier que l'utilisateur possède cette facture
     const existingInvoice = await prisma.invoice.findUnique({
-      where: { id: params.id },
-      include: { lines: true }, // Inclure les lignes existantes
+      where: { id },
+      include: { lines: true },
     });
 
     if (!existingInvoice || existingInvoice.userId !== user.id) {
       return NextResponse.json({ error: "Facture introuvable ou accès refusé." }, { status: 404 });
     }
 
-    // 1. Mettre à jour la facture elle-même
     const updatedInvoice = await prisma.invoice.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: body.name,
         issuerName: body.issuerName,
@@ -87,19 +86,16 @@ export async function PUT(
       },
     });
 
-    // 2. Gérer les lignes de facture
     if (body.lines && Array.isArray(body.lines)) {
-      // Supprimer les anciennes lignes
       await prisma.invoiceLine.deleteMany({
-        where: { invoiceId: params.id },
+        where: { invoiceId: id },
       });
 
-      // Créer les nouvelles lignes
       const linesToCreate = body.lines.map((line: any) => ({
         description: line.description || "",
         quantity: line.quantity || 0,
         unitPrice: line.unitPrice || 0,
-        invoiceId: params.id,
+        invoiceId: id,
       }));
 
       if (linesToCreate.length > 0) {
@@ -109,9 +105,8 @@ export async function PUT(
       }
     }
 
-    // 3. Récupérer la facture complète avec les nouvelles lignes
     const finalInvoice = await prisma.invoice.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { lines: true },
     });
 
@@ -127,21 +122,22 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
   const user = await requireAuth();
   if (user instanceof NextResponse) return user;
 
   try {
     const invoice = await prisma.invoice.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!invoice || invoice.userId !== user.id) {
       return NextResponse.json({ error: "Facture introuvable ou accès refusé." }, { status: 404 });
     }
 
-    await prisma.invoice.delete({ where: { id: params.id } });
+    await prisma.invoice.delete({ where: { id } });
 
     return NextResponse.json({ message: "Facture supprimée." });
   } catch (error) {
