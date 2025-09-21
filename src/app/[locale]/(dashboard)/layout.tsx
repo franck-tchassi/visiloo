@@ -70,7 +70,7 @@ export default async function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset" onSearchClick={() => {}} />
       <SidebarInset>
         <SiteHeader
           user={{ name: currentUser.name || currentUser.email || "", email: currentUser.email || "", avatar: currentUser.image || "https://github.com/shadcn.png" }}
