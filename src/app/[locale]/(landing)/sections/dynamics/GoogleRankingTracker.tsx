@@ -77,7 +77,7 @@ const AnimatedPositionChecker = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {competitors.map((comp) => (
-            <Marker key={comp.title} position={comp.coords}>
+            <Marker key={comp.title} position={comp.coords as [number, number]}>
               <Tooltip direction="top" offset={[0, -10]} permanent>
                 <span style={{ color: getColor(comp.position), fontWeight: "bold" }}>
                   {comp.position}
@@ -92,4 +92,3 @@ const AnimatedPositionChecker = () => {
 };
 
 export default AnimatedPositionChecker;
-;
