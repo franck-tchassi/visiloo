@@ -239,7 +239,7 @@ const AuditPage = () => {
           ref={sectionRefs.categorie} 
           className="mb-8 p-5 border border-gray-300 rounded-lg bg-white shadow-sm scroll-mt-5"
         >
-          <CategorieEntreprise data={establishment} />
+          <CategorieEntreprise  />
         </section>
         
         <section 
@@ -247,7 +247,7 @@ const AuditPage = () => {
           ref={sectionRefs['analyse-heures']} 
           className="mb-8 p-5 border border-gray-300 rounded-lg bg-white shadow-sm scroll-mt-5"
         >
-          <AnalyseHeuresOuverture data={establishment} />
+          <AnalyseHeuresOuverture/>
         </section>
         
         <section 
@@ -255,7 +255,7 @@ const AuditPage = () => {
           ref={sectionRefs.avis} 
           className="mb-8 p-5 border border-gray-300 rounded-lg bg-white shadow-sm scroll-mt-5"
         >
-          <Avis data={establishment} />
+          <Avis  />
         </section>
         
         <section 
@@ -263,7 +263,7 @@ const AuditPage = () => {
           ref={sectionRefs['reponse-avis']} 
           className="mb-8 p-5 border border-gray-300 rounded-lg bg-white shadow-sm scroll-mt-5"
         >
-          <ReponseAuxAvis data={establishment} />
+          <ReponseAuxAvis  />
         </section>
         
         <section 
@@ -287,7 +287,7 @@ const AuditPage = () => {
           ref={sectionRefs.publications} 
           className="mb-8 p-5 border border-gray-300 rounded-lg bg-white shadow-sm scroll-mt-5"
         >
-          <Publications data={establishment} />
+          <Publications  />
         </section>
       </div>
     </div>
