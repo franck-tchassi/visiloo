@@ -1,0 +1,252 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+ 
+generator client {
+  provider = "prisma-client-js"
+}
+ 
+model User {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  hashedPassword String?
+  accounts      Account[]
+  role           Role @default(USER)
+  Authenticator Authenticator[]
+
+  //blogs
+  posts    Post[]
+
+  // Stripe
+  stripeCustomerId String? 
+
+  subscriptions   Subscription[]   // relation 1-n
+
+  //member
+  memberships    Membership[]
+  currentOrganizationId String? @db.ObjectId
+  currentOrganization Organization? @relation("CurrentOrganizationForUsers", fields: [currentOrganizationId], references: [id])
+
+  
+  selectedEstablishmentId String? @db.ObjectId
+  selectedEstablishment   Establishment? @relation("SelectedEstablishment", fields: [selectedEstablishmentId], references: [id])
+ 
+  //facturation
+  invoices      Invoice[]  @relation("UserInvoices")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//information google maps
+model Establishment {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  address       String
+  city          String?
+  postalCode    String?
+  country       String?
+  phone         String?
+  rating        Float    @default(0)
+  reviews       Int      @default(0)
+  isOpen        Boolean  @default(false)
+  googleMapsUrl String
+  placeId       String   @unique
+  openingHours  Json?
+  lat           Float
+  lng           Float
+  lastSyncedAt  DateTime?
+  photos        Json?
+
+
+  // NOUVEAUX CHAMPS
+  description   String?   // Description de l'établissement
+  categories    String[]  // Catégories/types d'établissement
+  website       String?   // Site web
+  businessStatus String?  // Statut de l'entreprise (OPERATIONAL, CLOSED_TEMPORARILY, etc.)
+
+  selectedByUsers User[] @relation("SelectedEstablishment")
+
+  organizationId String       @db.ObjectId
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId]) // <--- Ajoute cette ligne !
+}
+
+// facturaotin
+model Invoice {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  issuerName     String        @default("")
+  issuerAddress  String        @default("")
+  clientName     String        @default("")
+  clientAddress  String        @default("")
+  invoiceDate    String   @default("")
+  dueDate     String   @default("")
+  vatActive      Boolean       @default(false)
+  vatRate        Float         @default(20)
+  status         Int           @default(1)
+  lines          InvoiceLine[] @relation("InvoiceLines")
+  userId         String        @db.ObjectId
+  user           User          @relation("UserInvoices", fields: [userId], references: [id])
+}
+
+model InvoiceLine {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  description String   @default("")
+  quantity    Int      @default(0)
+  unitPrice   Float    @default(0)
+  invoiceId   String   @db.ObjectId
+  invoice     Invoice  @relation("InvoiceLines", fields: [invoiceId], references: [id], onDelete: Cascade)
+}
+
+
+
+model Post {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  content     String
+  image       String?        // image du post
+  tag         String?        // ex: SEO, Optimisation
+  readingTime Int?           // minutes de lecture
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String   @db.ObjectId
+  published   Boolean  @default(false)
+}
+
+
+enum Role {
+  USER
+  MEMBER
+  ADMIN
+}
+
+// creation de l'espace de travail
+model Organization {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  memberships Membership[]
+  usersWithThisAsCurrent User[] @relation("CurrentOrganizationForUsers") // Relation inverse
+  invitations Invitation[] // Nouvelle relation pour les invitations
+  searchSessions SearchSession[] // Nouvelle relation pour les sessions de recherche
+  establishments Establishment[]
+  googleBusinessProfileAccounts GoogleBusinessProfileAccount[] // Nouvelle relation pour les comptes Google Business Profile
+  createdAt   DateTime     @default(now())
+}
+
+model GoogleBusinessProfileAccount {
+  id                  String       @id @default(auto()) @map("_id") @db.ObjectId
+  organizationId      String       @db.ObjectId
+  organization        Organization @relation(fields: [organizationId], references: [id])
+  googleAccountId     String       @unique // L'ID du compte Google Business Profile
+  accountName         String
+  accessToken         String
+  refreshToken        String
+  accessTokenExpires  DateTime
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+}
+
+model SearchSession {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId       String       @unique // L'ID généré par le frontend pour cette session de recherche
+  keyword         String
+  city            String
+  createdAt       DateTime     @default(now())
+  generatedLink   String
+
+  organizationId  String       @db.ObjectId
+  organization    Organization @relation(fields: [organizationId], references: [id])
+}
+
+model Invitation {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  email           String
+  organizationId  String    @db.ObjectId
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  role            Role      @default(MEMBER)
+  token           String    @unique
+  expiresAt       DateTime
+  createdAt       DateTime  @default(now())
+}
+
+model Membership {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String        @db.ObjectId
+  organizationId String        @db.ObjectId
+  role           Role          @default(MEMBER)
+  user           User          @relation(fields: [userId], references: [id])
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now()) // Assurer que createdAt est présent
+}
+
+model Subscription {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId               String   @db.ObjectId
+  stripeSubscriptionId String
+  plan                 String
+  interval             String
+  status               String
+  createdAt            DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+ 
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+}
+ 
+ 
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @id @map("_id")
+  userId               String  @db.ObjectId
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([userId, credentialID])
+}
+
+
+type Address{
+    line1 String
+    line2 String?
+    country String
+    state String?
+    city String
+    postalCode String
+}
