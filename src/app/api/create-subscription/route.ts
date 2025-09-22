@@ -3,7 +3,7 @@ import { getCurrentUser } from '@/actions/getCurrentUser';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2023-10-16', // Utilise une version stable supportée par Stripe
+  apiVersion: '2025-07-30.basil', // Utilise une version stable supportée par Stripe
 });
 
 export async function POST(req: Request) {
