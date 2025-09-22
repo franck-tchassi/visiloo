@@ -67,6 +67,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.16",
     "googleapis": "^159.0.0",
+    "ioredis": "^5.7.0",
     "jspdf": "^3.0.2",
     "jspdf-autotable": "^5.0.2",
     "leaflet": "^1.9.4",
