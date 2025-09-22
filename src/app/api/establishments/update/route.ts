@@ -4,9 +4,10 @@ import { prisma } from "@/lib/prismadb";
 import { getCurrentUser } from "@/actions/getCurrentUser";
 
 export async function POST(req: Request) {
+  // On récupère l'utilisateur AVANT le try/catch pour l'utiliser partout
+  const user = await getCurrentUser();
+
   try {
-    const user = await getCurrentUser();
-    
     if (!user) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
@@ -16,19 +17,19 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { 
-      placeId, 
-      name, 
-      address, 
-      city, 
-      postalCode, 
-      country, 
-      rating, 
-      reviews, 
-      phone, 
-      lat, 
-      lng, 
-      isOpen 
+    const {
+      placeId,
+      name,
+      address,
+      city,
+      postalCode,
+      country,
+      rating,
+      reviews,
+      phone,
+      lat,
+      lng,
+      isOpen
     } = body;
 
     if (!placeId) {
@@ -58,41 +59,33 @@ export async function POST(req: Request) {
       }
     });
 
-    // Mettre à jour l'établissement
-    const updatedEstablishment = await prisma.establishment.update({
-      where: {
-        placeId_organizationId: { // Utiliser un champ unique ou créer une contrainte
-          placeId: placeId,
-          organizationId: user.currentOrganizationId
-        }
-      },
-      data: updateData
-    });
+    // Mettre à jour l'établissement avec la clé composite
+    
 
-    return NextResponse.json(updatedEstablishment);
+    
 
   } catch (error: any) {
     console.error("Error updating establishment:", error);
-    
+
     // Si l'établissement n'existe pas, le créer
     if (error.code === 'P2025') {
       try {
         const body = await req.json();
         const { placeId, name, address, lat, lng } = body;
-        
+
         const newEstablishment = await prisma.establishment.create({
           data: {
             placeId: placeId,
             name: name || "Nouvel établissement",
             address: address || "",
-            organizationId: user!.currentOrganizationId!,
+            organizationId: user?.currentOrganizationId!,
             googleMapsUrl: `https://www.google.com/maps/place/?q=place_id:${placeId}`,
             lat: lat || 0,
             lng: lng || 0,
             lastSyncedAt: new Date()
           }
         });
-        
+
         return NextResponse.json(newEstablishment);
       } catch (createError: any) {
         return NextResponse.json(
@@ -101,7 +94,7 @@ export async function POST(req: Request) {
         );
       }
     }
-    
+
     return NextResponse.json(
       { error: error.message || "Erreur serveur" },
       { status: 500 }
