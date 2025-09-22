@@ -22,7 +22,7 @@ interface SiteHeaderProps {
   currentOrganizationId: string | null | undefined;
 }
 
-export function SiteHeader({ user, onSearchClick, organizations, currentOrganizationId }: SiteHeaderProps) {
+export function SiteHeader({ user, organizations, currentOrganizationId }: SiteHeaderProps) {
   // const pathname = usePathname(); // Déplacé vers DashboardClientWrapper
   console.log('SiteHeader - Props organizations:', organizations); // DEBUG
   console.log('SiteHeader - Props currentOrganizationId:', currentOrganizationId); // DEBUG
