@@ -32,7 +32,7 @@ interface MembersPageProps {
     searchParams: { [key: string]: string | string[] | undefined };
 }
 
-const MembersPage = async ({ searchParams }: MembersPageProps) => {
+const MembersPage = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
     const currentUser = await getCurrentUser();
 
     if (!currentUser || !currentUser.id) {
