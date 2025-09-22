@@ -1,6 +1,6 @@
 "use client"
 
-import { IconChevronLeft, IconChevronRight, IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react"
+import { } from "@tabler/icons-react"
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 
@@ -12,6 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export function NavMain({
   items,
@@ -65,7 +66,7 @@ export function NavMain({
                   <span className="text-lg">{item.title}</span>
                   {item.items && (
                     <span className="ml-auto">
-                      {openItems[item.title] ? <IconChevronLeft className="h-4 w-4" /> : <IconChevronRight className="h-4 w-4" />}
+                      {openItems[item.title] ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                     </span>
                   )}
                 </SidebarMenuButton>

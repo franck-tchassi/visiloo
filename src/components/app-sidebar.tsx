@@ -53,6 +53,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Image from "next/image"
+import { Megaphone } from "lucide-react";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   onSearchClick: () => void;
@@ -104,6 +105,23 @@ const data = {
           title: "Offres",
           url: "/dashboard/offers",
           icon: MdOutlineLocalOffer,
+        },
+      ],
+    },
+    {
+      title: "Videos IA",
+
+      icon: FaRegCalendarAlt,
+      items: [
+        {
+          title: "Creative Tools",
+          url: "/dashboard/creative-tools",
+          icon: BsImages,
+        },
+        {
+          title: "My Ads",
+          url: "/dashboard/my-ads",
+          icon: Megaphone,
         },
       ],
     },

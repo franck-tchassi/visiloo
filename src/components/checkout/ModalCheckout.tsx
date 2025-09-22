@@ -96,7 +96,7 @@ export default function ModalOnboardingCheckout({ open, onClose, plan, interval,
         fetch("/api/create-subscription", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ plan: plan.id, interval }), 
+            body: JSON.stringify({ plan: plan.id, interval }),
         })
             .then(res => res.json())
             .then(data => {
@@ -121,37 +121,37 @@ export default function ModalOnboardingCheckout({ open, onClose, plan, interval,
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/15">
             <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full flex flex-col md:flex-row p-0 relative">
                 <button onClick={onClose} className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
-                
+
                 {/* Colonne gauche : récapitulatif produit */}
                 <div className="md:w-1/2 w-full bg-gray-50 p-8 flex flex-col justify-between rounded-xl border-gray-200">
                     {stripeInfo && (
                         <div className="space-y-4">
                             <h2>Récapitulatif de la commande</h2>
                             <div>
-                            <div className="text-3xl font-bold text-blue-600">
-                                {(stripeInfo.price.unit_amount / 100).toFixed(2)} {stripeInfo.price.currency?.toUpperCase() === "EUR" ? "€" : stripeInfo.price.currency?.toUpperCase()}
-                                <span className="text-sm text-gray-400 font-normal ml-2">TVA incluse</span>
-                            </div>
-                            <span>
-                                puis
-                                 <span className="ml-1">
+                                <div className="text-3xl font-bold text-blue-600">
                                     {(stripeInfo.price.unit_amount / 100).toFixed(2)} {stripeInfo.price.currency?.toUpperCase() === "EUR" ? "€" : stripeInfo.price.currency?.toUpperCase()}
-                                 </span>
-                                <span className="ml-1">
-                                    {stripeInfo.price.recurring?.interval === "year"
+                                    <span className="text-sm text-gray-400 font-normal ml-2">TVA incluse</span>
+                                </div>
+                                <span>
+                                    puis
+                                    <span className="ml-1">
+                                        {(stripeInfo.price.unit_amount / 100).toFixed(2)} {stripeInfo.price.currency?.toUpperCase() === "EUR" ? "€" : stripeInfo.price.currency?.toUpperCase()}
+                                    </span>
+                                    <span className="ml-1">
+                                        {stripeInfo.price.recurring?.interval === "year"
                                             ? "annuel"
                                             : "mensuel"}
+                                    </span>
                                 </span>
-                            </span>
                             </div>
                             <div>
-                              {stripeInfo.product?.images?.[0] && (
-                                <img
-                                    src={stripeInfo.product.images[0]}
-                                    alt={stripeInfo.product.name}
-                                    className="h-12 object-contain mb-3"
-                                />
-                              )}
+                                {stripeInfo.product?.images?.[0] && (
+                                    <img
+                                        src={stripeInfo.product.images[0]}
+                                        alt={stripeInfo.product.name}
+                                        className="h-12 object-contain mb-3"
+                                    />
+                                )}
                             </div>
                             <div className="text-gray-600 text-sm flex flex-col gap-2">
                                 <span className="font-semibold">{stripeInfo.product.name}</span>
@@ -184,18 +184,18 @@ export default function ModalOnboardingCheckout({ open, onClose, plan, interval,
                         </div>
                     )}
                 </div>
-                
+
                 {/* Colonne droite : onboarding */}
                 <div className="md:w-1/2 w-full p-8">
                     <div className="text-xl font-bold mb-6 text-center">
-                        Vos coordonnées   
+                        Vos coordonnées
                         <span>
                             <ChevronRight className="w-8 h-8" />
                         </span>
                         Paiement
                     </div>
                     {clientSecret && (
-                        <Elements stripe={stripePromise} options={{clientSecret}}>
+                        <Elements stripe={stripePromise} options={{ clientSecret }}>
                             <OnboardingForm
                                 step={step}
                                 setStep={setStep}
@@ -203,7 +203,7 @@ export default function ModalOnboardingCheckout({ open, onClose, plan, interval,
                             />
                         </Elements>
                     )}
-                    
+
                 </div>
             </div>
         </div>
@@ -228,25 +228,19 @@ function OnboardingForm({ step, setStep, onClose }: { step: 1 | 2; setStep: (s: 
                 className="space-y-6"
             >
                 <div>
-    <h3 className="font-medium mb-4">
-        Nous recueillons ces informations afin de lutter contre la fraude et de garantir que votre paiement est sécurisé.
-    </h3>
-    <AddressElement
-        options={{
-            mode: "billing",
-            //allowedCountries: ["FR", "BE", "CH", "CA"],
-            fields: { 
-                //phone: 'always',
-               // line2: "never"  // Remplacez "lige2" par "line2" (orthographe correcte)
-            
-            },
-            validation: { 
-                phone: { required: 'never' }, 
-              //  line2: { required: 'never' }  // Remplacez "ligne2" par "line2" (orthographe anglaise)
-            }
-        }}
-    />
-</div>
+                    <h3 className="font-medium mb-4">
+                        Nous recueillons ces informations afin de lutter contre la fraude et de garantir que votre paiement est sécurisé.
+                    </h3>
+                    <AddressElement
+                        options={{
+                            mode: "billing",
+                            fields: {
+                                phone: 'always'
+                            },
+                           
+                        }}
+                    />
+                </div>
                 <button
                     type="submit"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
@@ -296,7 +290,7 @@ function OnboardingForm({ step, setStep, onClose }: { step: 1 | 2; setStep: (s: 
                         layout: { type: "tabs", defaultCollapsed: false },
                     }}
                 />
-               
+
             </div>
             <button
                 type="submit"
